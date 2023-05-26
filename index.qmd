@@ -1,0 +1,72 @@
+---
+title: "vcf-compare-results"
+---
+
+Comparison of VCF files generated from the same `.bam` file processed with the same megSAP pipeline.
+
+## Load libraries and data
+
+```{r}
+#| output: false
+
+# Load the libraries
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(viridis)
+
+# Load the csv file
+matrix <- read.csv("matrix.csv", header = TRUE, check.names = FALSE)
+
+# Melt the data to a long format suitable for ggplot
+data_melted <- melt(matrix, )
+
+# Convert 'based_on' to a factor
+data_melted$based_on <- factor(data_melted$based_on, levels = unique(data_melted$based_on))
+
+# Remove rows with NA values
+data_melted <- data_melted %>%
+  filter(!is.na(value))
+
+```
+
+## Heatmap version
+
+```{r}
+#| label: fig-heatmap
+#| fig-cap: "Vcf-file comparison as heatmap"
+#| warning: false
+
+heatmap <- ggplot(data_melted, aes(variable, based_on, fill = value)) +
+  geom_tile() +
+  scale_fill_viridis(name = NULL) +
+  scale_y_discrete(limits = rev(levels(data_melted$based_on))) +
+  scale_x_discrete(position = "top") +
+  xlab("not present in") +
+  ylab("Variants in") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 0))
+
+heatmap
+```
+
+## Balloon plot version
+
+```{r}
+#| label: fig-balloon
+#| fig-cap: "Vcf-file comparison as balloon plot"
+#| warning: false
+
+balloon <- ggplot(data_melted, aes(variable, based_on, size = value, fill = value)) +
+  geom_point(shape = 21, colour = "black") +
+  scale_fill_viridis(name = NULL) +
+  scale_size_continuous(guide = 'none') +
+  scale_x_discrete(position = "top") +
+  scale_y_discrete(limits = rev(levels(data_melted$based_on))) +
+  xlab("not present in") +
+  ylab("Variants in") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 0))
+
+balloon
+```

@@ -1,0 +1,19 @@
+project:
+  title: "vcf-compare-results"
+
+author:
+  - name: Benedikt Schnur
+    orcid: 0000-0002-1977-7878
+
+format: 
+  html:
+    theme: litera
+    code-fold: true
+    code-line-numbers: true
+    embed-resources: true
+
+knitr:
+  opts_chunk:
+    dev: png
+    dev.args: { bg: "transparent" }
+    tidy: styler
